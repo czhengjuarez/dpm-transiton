@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The DPM Transition Worksheet · Ops Forward</title>
+<meta name="description" content="Sort the work a design program manager actually does, and see what the role becomes. Companion to Design roles are shifting. So should the DPM role.">
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand"><b>Ops Forward</b> · DPM Transition Worksheet</div>
+    <div class="masthead-actions">
+      <button class="btn btn-ghost hidden" id="btn-restart">Start over</button>
+      <button class="btn hidden" id="btn-export">Export</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ SCREEN 1: mode ============ -->
+<main id="screen-mode">
+  <div class="wrap hero">
+    <div class="eyebrow">Companion worksheet</div>
+    <h1>The role is changing. Decide what it becomes.</h1>
+    <p class="lede">Design program management is a bundle of work that used to travel together. The bundle came apart. Some of it moves to a TPM, some of it a tool now does, some of it should stop being produced, and some of it becomes the most valuable thing the role does.</p>
+    <p class="lede">Below are 38 tasks, taken from eight real Design Program Manager job postings. Make five kinds of call on each one. At the end you get the role rewritten, and a plan for the person holding it.</p>
+
+    <div class="modes">
+      <button class="mode-card" data-mode="leader">
+        <span class="mc-role">Mode one</span>
+        <span class="mc-title">I lead the team</span>
+        <span class="mc-body">You own this role, and probably the person in it. You get the role redesigned, sequenced by what you can act on without asking anyone, and a plan for the conversation you owe them.</span>
+      </button>
+      <button class="mode-card" data-mode="dpm">
+        <span class="mc-role">Mode two</span>
+        <span class="mc-title">I am the DPM</span>
+        <span class="mc-body">You are running this on your own job. You get an argument you can take to your manager about what to stop doing, and an honest read on where your capability gaps are.</span>
+      </button>
+    </div>
+
+    <div class="narrow">
+      <h3 style="font-size:1rem;margin-bottom:8px">The five calls</h3>
+      <div class="legend" id="legend"></div>
+      <p style="color:var(--of-fg-subtle);font-size:.8125rem">Nothing is stored, nothing leaves your browser except an anonymous tally of your five counts if you ask for the written read at the end. No task text, no company, no name.</p>
+    </div>
+  </div>
+</main>
+
+<!-- ============ SCREEN 2: sort ============ -->
+<main id="screen-sort" class="hidden">
+  <div class="progress-bar">
+    <div class="progress-inner">
+      <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
+      <div class="progress-count" id="pcount">0 / 38</div>
+      <div class="tally" id="tally"></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div style="padding:32px 0 8px">
+      <div class="eyebrow" id="sort-mode-label">Leader mode</div>
+      <h2 style="font-size:1.5rem;margin-bottom:8px" id="sort-title">Sort the work</h2>
+      <p style="color:var(--of-fg-muted);max-width:62ch;margin:0" id="sort-lede"></p>
+    </div>
+
+    <details style="margin:16px 0;color:var(--of-fg-muted);font-size:.875rem">
+      <summary style="cursor:pointer;font-weight:500;color:var(--of-fg-default)">What the five calls mean</summary>
+      <div class="legend" id="legend2" style="margin-top:12px"></div>
+    </details>
+
+    <div id="clusters"></div>
+  </div>
+
+  <div class="dock">
+    <div class="dock-inner">
+      <span class="dock-note" id="dock-note">Mark at least eight before the result means anything.</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" id="btn-back">Back</button>
+        <button class="btn btn-primary btn-lg" id="btn-analyse" disabled>See the plan</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ SCREEN 3: results ============ -->
+<main id="screen-result" class="hidden">
+  <div class="wrap">
+    <div style="padding:32px 0 0">
+      <div class="eyebrow" id="result-mode-label"></div>
+      <h1 style="font-size:clamp(1.6rem,4vw,2.25rem)">Your result</h1>
+    </div>
+
+    <div class="statrow" id="stats"></div>
+    <div class="verdict" id="verdict"></div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-role" aria-selected="true" aria-controls="panel-role">The role, redesigned</button>
+      <button class="tab" role="tab" id="tab-person" aria-selected="false" aria-controls="panel-person">The transition</button>
+    </div>
+
+    <section class="tabpanel" id="panel-role" role="tabpanel" aria-labelledby="tab-role"></section>
+    <section class="tabpanel hidden" id="panel-person" role="tabpanel" aria-labelledby="tab-person"></section>
+
+    <div class="caveat">
+      <h3>What this did not measure</h3>
+      <p>It counts tasks, not hours. That cuts against the whole exercise. Automating seventy percent of a role's tasks removes very little of the role if the remaining thirty percent is where the week actually goes, and nobody has published what share of a DPM's time goes to judgment work.</p>
+      <p>So run it, then open the calendar for the same week and compare. If the two disagree, the calendar is right.</p>
+    </div>
+  </div>
+
+  <footer class="site">
+    <div class="wrap">
+      <p>Task inventory read from eight Design Program Manager postings, 22 to 23 August 2026. Two were open at the time of reading. Tasks are paraphrased from posting bullets, not quoted.</p>
+      <div class="sources" id="sources"></div>
+      <p style="margin-top:16px">Companion to <b>Design roles are shifting. So should the DPM role.</b> · Ops Forward</p>
+    </div>
+  </footer>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>
