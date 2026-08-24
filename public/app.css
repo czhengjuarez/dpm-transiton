@@ -71,6 +71,10 @@
   --call-elevate: var(--of-success-500);
 }
 
+/* Explicit toggle overrides the OS-level `light dark` preference above. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
 * { box-sizing: border-box; }
 
 html { -webkit-text-size-adjust: 100%; }
@@ -117,9 +121,35 @@ a { color: var(--of-fg-brand); }
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--of-fg-subtle);
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
 }
-.brand b { color: var(--of-fg-brand); font-weight: 600; }
+.brand:hover { color: var(--of-fg-brand); }
+.brand:focus-visible { outline: 3px solid var(--of-ring); outline-offset: 3px; }
 .masthead-actions { display: flex; gap: var(--s2); align-items: center; }
+
+.theme-toggle {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  border: 1px solid var(--of-border-line);
+  background: var(--of-bg-elevated);
+  color: var(--of-fg-muted);
+  border-radius: var(--of-radius-md);
+  padding: 0;
+  cursor: pointer;
+  transition: border-color .12s, color .12s;
+}
+.theme-toggle:hover { border-color: var(--of-border-strong); color: var(--of-fg-default); }
+.theme-toggle:focus-visible { outline: 3px solid var(--of-ring); outline-offset: 1px; }
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: none; }
+  :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: block; }
+}
 
 /* ---------- buttons ---------- */
 
@@ -240,6 +270,21 @@ button { font: inherit; cursor: pointer; }
 }
 .tally-chip[data-n="0"] { opacity: .28; }
 
+/* ---------- categories ---------- */
+
+.category { margin: var(--s8) 0 0; }
+.category:first-child { margin-top: var(--s5); }
+.category-head {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--of-fg-brand);
+  margin-bottom: var(--s3);
+  padding-bottom: var(--s2);
+  border-bottom: 2px solid var(--of-fg-brand);
+}
+
 /* ---------- clusters ---------- */
 
 .cluster { margin: var(--s6) 0; }
@@ -283,6 +328,7 @@ button { font: inherit; cursor: pointer; }
   font-style: italic; padding-left: 2px;
 }
 .post-take b { font-style: normal; font-family: var(--of-font-mono); font-size: 0.6875rem; text-transform: uppercase; }
+.post-n { font-family: var(--of-font-mono); font-size: 0.6875rem; }
 
 /* ---------- sticky footer ---------- */
 

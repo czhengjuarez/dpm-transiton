@@ -3,6 +3,8 @@
 // refresh mid-sort does not lose forty clicks.
 
 const STORE = 'ofw.dpm-transition.v1';
+const CONTRIBUTED_KEY = 'ofw.dpm-transition.contributed';
+const THEME_KEY = 'ofw.dpm-transition.theme';
 
 const state = {
   mode: null,
@@ -38,9 +40,30 @@ function clearStore() {
   try { localStorage.removeItem(STORE); } catch { /* ignore */ }
 }
 
+// ---------------------------------------------------------------- theme
+
+function currentTheme() {
+  const explicit = document.documentElement.getAttribute('data-theme');
+  if (explicit) return explicit;
+  return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  try { localStorage.setItem(THEME_KEY, theme); } catch { /* private mode, ignore */ }
+  $('#btn-theme').setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+}
+
+function initTheme() {
+  setTheme(currentTheme());
+  $('#btn-theme').addEventListener('click', () => setTheme(currentTheme() === 'dark' ? 'light' : 'dark'));
+}
+
 // ---------------------------------------------------------------- boot
 
 async function boot() {
+  initTheme();
+
   const res = await fetch('/api/tasks');
   state.data = await res.json();
 
@@ -52,6 +75,7 @@ async function boot() {
     b.addEventListener('click', () => start(b.dataset.mode));
   });
 
+  $('#btn-home').addEventListener('click', () => show('mode'));
   $('#btn-back').addEventListener('click', () => show('mode'));
   $('#btn-restart').addEventListener('click', () => {
     if (!confirm('Clear every call and start over?')) return;
@@ -114,7 +138,7 @@ function start(mode, silent) {
   state.mode = mode;
   if (!silent) save();
   $('#sort-mode-label').textContent = mode === 'dpm' ? 'DPM mode' : 'Leader mode';
-  $('#sort-title').textContent = mode === 'dpm' ? 'Sort your own week' : 'Sort the work';
+  $('#sort-title').textContent = mode === 'dpm' ? 'Sort your own work' : 'Sort the work';
   $('#sort-lede').textContent = LEDE[mode];
   renderClusters();
   updateProgress();
@@ -125,65 +149,90 @@ function renderClusters() {
   const host = $('#clusters');
   host.innerHTML = '';
 
+  // Tolerate a browser still holding the previous shape of the cached
+  // /api/tasks response (no `categories`): fall back to one flat group.
+  const categories = state.data.categories && state.data.categories.length
+    ? state.data.categories
+    : [{ id: null, name: null }];
+
+  const byCategory = new Map();
   for (const c of state.data.clusters) {
-    const sec = el('section', 'cluster');
-    const head = el('div', 'cluster-head');
-    head.append(el('h3', null, c.name));
-    head.append(el('div', 'cluster-note', c.note));
-    sec.append(head);
+    const key = categories.some((cat) => cat.id === c.category) ? c.category : null;
+    const list = byCategory.get(key) || [];
+    list.push(c);
+    byCategory.set(key, list);
+  }
 
-    c.tasks.forEach(([text, source], i) => {
-      const id = `${c.id}-${i}`;
-      const row = el('div', 'task');
-      row.append(el('div', 'task-text', text));
-      row.append(el('div', 'task-meta', source));
+  for (const cat of categories) {
+    const clusters = byCategory.get(cat.id);
+    if (!clusters || !clusters.length) continue;
 
-      const calls = el('div', 'task-calls');
-      for (const call of state.data.calls) {
-        const b = el('button', 'call-btn', call.label);
-        b.dataset.call = call.id;
-        b.dataset.task = id;
-        b.type = 'button';
-        b.setAttribute('aria-pressed', state.marks[id] === call.id ? 'true' : 'false');
-        b.setAttribute('aria-label', `${call.label}: ${text}`);
-        b.addEventListener('click', () => mark(id, call.id, c.post, row));
-        calls.append(b);
-      }
-      row.append(calls);
+    const catSec = el('section', 'category');
+    if (cat.name) catSec.append(el('h2', 'category-head', cat.name));
+    host.append(catSec);
 
-      const take = el('div', 'post-take');
-      take.dataset.for = id;
-      row.append(take);
-      if (state.marks[id]) paintTake(take, state.marks[id], c.post);
+    for (const c of clusters) {
+      const sec = el('section', 'cluster');
+      const head = el('div', 'cluster-head');
+      head.append(el('h3', null, c.name));
+      head.append(el('div', 'cluster-note', c.note));
+      sec.append(head);
 
-      sec.append(row);
-    });
+      c.tasks.forEach(([text, source], i) => {
+        const id = `${c.id}-${i}`;
+        const avg = (state.data.averages && state.data.averages[id]) || { call: c.post, n: null };
+        const row = el('div', 'task');
+        row.append(el('div', 'task-text', text));
+        row.append(el('div', 'task-meta', source));
 
-    host.append(sec);
+        const calls = el('div', 'task-calls');
+        for (const call of state.data.calls) {
+          const b = el('button', 'call-btn', call.label);
+          b.dataset.call = call.id;
+          b.dataset.task = id;
+          b.type = 'button';
+          b.setAttribute('aria-pressed', state.marks[id] === call.id ? 'true' : 'false');
+          b.setAttribute('aria-label', `${call.label}: ${text}`);
+          b.addEventListener('click', () => mark(id, call.id, avg, row));
+          calls.append(b);
+        }
+        row.append(calls);
+
+        const take = el('div', 'post-take');
+        take.dataset.for = id;
+        row.append(take);
+        if (state.marks[id]) paintTake(take, state.marks[id], avg);
+
+        sec.append(row);
+      });
+
+      catSec.append(sec);
+    }
   }
 }
 
-function mark(id, call, post, row) {
+function mark(id, call, avg, row) {
   if (state.marks[id] === call) delete state.marks[id];
   else state.marks[id] = call;
 
   row.querySelectorAll('.call-btn').forEach((b) => {
     b.setAttribute('aria-pressed', state.marks[id] === b.dataset.call ? 'true' : 'false');
   });
-  paintTake(row.querySelector('.post-take'), state.marks[id], post);
+  paintTake(row.querySelector('.post-take'), state.marks[id], avg);
   save();
   updateProgress();
 }
 
 const CALL_LABEL = { shift: 'Shift', automate: 'Automate', retire: 'Retire', evolve: 'Evolve', elevate: 'Elevate' };
 
-function paintTake(node, call, post) {
+function paintTake(node, call, avg) {
   if (!node) return;
   if (!call) { node.innerHTML = ''; return; }
-  if (call === post) {
-    node.innerHTML = `The post agrees. <b class="k-${post}">${CALL_LABEL[post]}</b>`;
+  const n = avg.n != null ? ` <span class="post-n">(n=${avg.n})</span>` : '';
+  if (call === avg.call) {
+    node.innerHTML = `The average agrees. <b class="k-${avg.call}">${CALL_LABEL[avg.call]}</b>${n}`;
   } else {
-    node.innerHTML = `The post says <b class="k-${post}">${CALL_LABEL[post]}</b>. You know your org, so the disagreement is the interesting part.`;
+    node.innerHTML = `The average says <b class="k-${avg.call}">${CALL_LABEL[avg.call]}</b>${n}. You know your org, so the disagreement is the interesting part.`;
   }
 }
 
@@ -217,14 +266,20 @@ async function analyse() {
   $('#btn-analyse').disabled = true;
   $('#btn-analyse').textContent = 'Working';
 
+  let contributed = false;
+  try { contributed = localStorage.getItem(CONTRIBUTED_KEY) === '1'; } catch { /* private mode, ignore */ }
+
   let payload;
   try {
     const res = await fetch('/api/advise', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mode: state.mode, marks: state.marks }),
+      body: JSON.stringify({ mode: state.mode, marks: state.marks, contribute: !contributed }),
     });
     payload = await res.json();
+    if (!contributed && payload.analysis && payload.analysis.marked >= 8) {
+      try { localStorage.setItem(CONTRIBUTED_KEY, '1'); } catch { /* private mode, ignore */ }
+    }
   } catch (e) {
     payload = { analysis: null, ai: null, aiError: 'network' };
   }
@@ -255,7 +310,7 @@ function renderResult() {
     [`${a.pctLeaving}%`, 'Leaving the role'],
     [`${a.pctStaying}%`, 'Staying or growing'],
     [String(a.counts.elevate), 'Marked elevate'],
-    [String(a.divergence.length), 'Where you disagreed with the post'],
+    [String(a.divergence.length), 'Where you disagreed with the average'],
   ];
   for (const [n, l] of cards) {
     const s = el('div', 'stat');
@@ -323,20 +378,23 @@ function renderRolePanel(a, ai) {
 
   if (a.divergence.length) {
     const d = el('div', 'diverge');
-    d.append(el('h3', null, `You disagreed with the post on ${a.divergence.length} ${a.divergence.length === 1 ? 'task' : 'tasks'}`));
+    d.append(el('h3', null, `You disagreed with the average on ${a.divergence.length} ${a.divergence.length === 1 ? 'task' : 'tasks'}`));
     const note = el('p');
     note.style.cssText = 'color:var(--of-fg-muted);font-size:.875rem;margin:0 0 12px';
-    note.textContent = 'This is the useful part. The post is one practitioner making a general argument. You have a specific org in front of you.';
+    note.textContent = 'This is the useful part. The average is everyone who has run this worksheet so far, starting from a single seed opinion. You have a specific org in front of you.';
     d.append(note);
     const scroller = el('div', 'scroller');
     const t = el('table');
-    t.innerHTML = '<thead><tr><th>Task</th><th>You</th><th>The post</th></tr></thead>';
+    t.innerHTML = '<thead><tr><th>Task</th><th>You</th><th>Average</th></tr></thead>';
     const tb = el('tbody');
     for (const row of a.divergence) {
       const tr = el('tr');
       tr.append(el('td', null, row.text));
       const y = el('td'); y.append(el('code', `k-${row.you}`, CALL_LABEL[row.you])); tr.append(y);
-      const o = el('td'); o.append(el('code', `k-${row.post}`, CALL_LABEL[row.post])); tr.append(o);
+      const o = el('td');
+      o.append(el('code', `k-${row.average}`, CALL_LABEL[row.average]));
+      if (row.n != null) o.append(el('span', 'post-n', ` n=${row.n}`));
+      tr.append(o);
       tb.append(tr);
     }
     t.append(tb);
@@ -473,11 +531,14 @@ function exportMd() {
 
   if (a.divergence.length) {
     L.push('');
-    L.push('## Where you disagreed with the post');
+    L.push('## Where you disagreed with the average');
     L.push('');
-    L.push('| Task | You | The post |');
+    L.push('| Task | You | Average |');
     L.push('| --- | --- | --- |');
-    for (const d of a.divergence) L.push(`| ${d.text} | ${CALL_LABEL[d.you]} | ${CALL_LABEL[d.post]} |`);
+    for (const d of a.divergence) {
+      const avg = d.n != null ? `${CALL_LABEL[d.average]} (n=${d.n})` : CALL_LABEL[d.average];
+      L.push(`| ${d.text} | ${CALL_LABEL[d.you]} | ${avg} |`);
+    }
   }
 
   L.push('');

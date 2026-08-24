@@ -1,5 +1,6 @@
-import { CLUSTERS, CALLS, TASKS, NEW_PROFILE, SOURCES } from './tasks.js';
+import { CLUSTERS, CATEGORIES, CALLS, TASKS, NEW_PROFILE, SOURCES } from './tasks.js';
 import { analyse, buildPrompt, extractJson } from './advice.js';
+import { ensureSeeded, recordContribution, readAverages } from './tally.js';
 
 const JSON_HEADERS = {
   'content-type': 'application/json; charset=utf-8',
@@ -13,9 +14,14 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === '/api/tasks') {
-      return json({ clusters: CLUSTERS, calls: CALLS, profile: NEW_PROFILE, sources: SOURCES, count: TASKS.length }, 200, {
-        'cache-control': 'public, max-age=3600',
-      });
+      const allIds = TASKS.map((t) => t.id);
+      const averages = await getAverages(env, allIds);
+      return json(
+        { clusters: CLUSTERS, categories: CATEGORIES, calls: CALLS, profile: NEW_PROFILE, sources: SOURCES, count: TASKS.length, averages },
+        200,
+        // Short cache: this reflects a live crowd tally, not a static inventory.
+        { 'cache-control': 'public, max-age=120' }
+      );
     }
 
     if (url.pathname === '/api/advise') {
@@ -45,10 +51,19 @@ async function handleAdvise(request, env, ctx) {
   if (!marks) return json({ error: 'marks required' }, 400);
   if (Object.keys(marks).length > 200) return json({ error: 'too many marks' }, 400);
 
-  const analysis = analyse({ mode: body.mode, marks });
+  const averages = await getAverages(env, Object.keys(marks));
+  const analysis = analyse({ mode: body.mode, marks, averages });
 
   if (analysis.marked < 8) {
     return json({ analysis, ai: null, aiError: 'too-few-marks' });
+  }
+
+  // One tally contribution per browser, flagged client-side, so re-reading
+  // your own result does not inflate the average you are being compared to.
+  if (body.contribute === true && env.TALLY) {
+    try {
+      await recordContribution(env.TALLY, marks);
+    } catch { /* tally is a nice-to-have, never block the result on it */ }
   }
 
   if (!env.AI) {
@@ -93,6 +108,18 @@ async function handleAdvise(request, env, ctx) {
     return json({ analysis, ai: clean, model });
   } catch (err) {
     return json({ analysis, ai: null, aiError: String(err && err.message ? err.message : err) });
+  }
+}
+
+// Falls back to {} (which makes advice.js use each task's static seed
+// position) when there is no TALLY binding, e.g. a preview build.
+async function getAverages(env, taskIds) {
+  if (!env.TALLY || !taskIds.length) return {};
+  try {
+    await ensureSeeded(env.TALLY, taskIds);
+    return await readAverages(env.TALLY, taskIds);
+  } catch {
+    return {};
   }
 }
 

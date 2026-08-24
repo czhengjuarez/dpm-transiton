@@ -13,11 +13,17 @@ const STAYING = new Set(['evolve', 'elevate']);
 const byId = new Map(TASKS.map((t) => [t.id, t]));
 
 /**
- * @param {{mode:'leader'|'dpm', marks:Record<string,string>}} input
+ * @param {{mode:'leader'|'dpm', marks:Record<string,string>, averages?:Record<string,{call:string,n:number}>}} input
  */
 export function analyse(input) {
   const marks = input.marks || {};
+  const averages = input.averages || null;
   const entries = Object.entries(marks).filter(([id, call]) => byId.has(id) && call);
+
+  // Falls back to the author's seed position when no live tally is available
+  // (no D1 binding, e.g. a preview env), so the page stays correct either way.
+  const averageOf = (task) => (averages && averages[task.id] ? averages[task.id].call : task.post);
+  const nOf = (task) => (averages && averages[task.id] ? averages[task.id].n : null);
 
   const counts = { shift: 0, automate: 0, retire: 0, evolve: 0, elevate: 0 };
   const buckets = { shift: [], automate: [], retire: [], evolve: [], elevate: [] };
@@ -33,16 +39,17 @@ export function analyse(input) {
   const staying = counts.evolve + counts.elevate;
   const pct = (n) => (marked ? Math.round((n / marked) * 100) : 0);
 
-  // Where the reader and the post disagree. This is the interesting output.
+  // Where the reader and the crowd average disagree. This is the interesting output.
   const divergence = entries
     .map(([id, call]) => ({ task: byId.get(id), call }))
-    .filter(({ task, call }) => task.post !== call)
+    .filter(({ task, call }) => averageOf(task) !== call)
     .map(({ task, call }) => ({
       id: task.id,
       text: task.text,
       cluster: task.clusterName,
       you: call,
-      post: task.post,
+      average: averageOf(task),
+      n: nOf(task),
     }));
 
   // Cluster-level rollup: which clusters are fully leaving, which are contested.
@@ -208,7 +215,7 @@ WRITING RULES, these are strict:
 - Do not flatter the reader or praise their answers.
 - Concrete over abstract. Name the actual clusters they marked.
 - Say the uncomfortable thing if the data supports it.
-- If the reader disagreed with the argument above, engage with their reasoning as possibly correct. They know their org and you do not.
+- If the reader disagreed with what other respondents landed on, engage with their reasoning as possibly correct, especially where the sample behind that average is still small. They know their org and you do not.
 
 Return ONLY valid JSON matching the requested shape. No preamble, no code fence.`;
 
@@ -217,8 +224,11 @@ export function buildPrompt(a) {
     (a.buckets[bucket] || []).slice(0, n).map((t) => `${t.clusterName}: ${t.text}`).join('; ') || 'none';
 
   const disagreements = a.divergence.length
-    ? a.divergence.slice(0, 6).map((d) => `"${d.text}" (they said ${d.you}, the argument says ${d.post})`).join('; ')
-    : 'none, they matched the argument on every task';
+    ? a.divergence
+        .slice(0, 6)
+        .map((d) => `"${d.text}" (they said ${d.you}, other respondents landed on ${d.average}${d.n != null ? `, n=${d.n}` : ''})`)
+        .join('; ')
+    : 'none, they matched the crowd average on every task';
 
   const gapList = a.gaps.length ? a.gaps.map((g) => g.label).join('; ') : 'none';
   const partialList = a.partial.length ? a.partial.map((g) => g.label).join('; ') : 'none';
@@ -239,7 +249,7 @@ Marked to automate: ${top('automate')}
 Marked to retire: ${top('retire')}
 Marked to elevate: ${top('elevate')}
 
-Where they disagreed with the argument: ${disagreements}
+Where they disagreed with what other respondents landed on: ${disagreements}
 
 Capability gaps against the evolving profile, meaning they invested nothing in these areas: ${gapList}
 Thin coverage: ${partialList}

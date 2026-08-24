@@ -10,6 +10,12 @@ not_found_handling = "single-page-application"
 [ai]
 binding = "AI"
 
+[[d1_databases]]
+binding = "TALLY"
+database_name = "dpm-transition-tally"
+database_id = "95fe67bd-671a-4566-8528-5b957be33ad0"
+migrations_dir = "./migrations"
+
 [vars]
 MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
 

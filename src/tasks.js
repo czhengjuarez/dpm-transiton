@@ -41,10 +41,20 @@ export const CALLS = [
   },
 ];
 
+// The fourteen clusters grouped under a handful of broader categories, so the
+// sort screen can show a short spine before the reader drills into specifics.
+export const CATEGORIES = [
+  { id: 'strategy', name: 'Strategy and governance' },
+  { id: 'coordination', name: 'Coordination and communication' },
+  { id: 'tooling', name: 'Tooling and documentation' },
+  { id: 'people', name: 'People and process' },
+];
+
 export const CLUSTERS = [
   {
     id: 'coordination',
     name: 'Program and roadmap coordination',
+    category: 'coordination',
     post: 'shift',
     note: 'Present in five of eight postings. The historic centre of the role.',
     tasks: [
@@ -57,6 +67,7 @@ export const CLUSTERS = [
   {
     id: 'rituals',
     name: 'Ritual and meeting facilitation',
+    category: 'coordination',
     post: 'shift',
     note: 'Three of eight. Recurring ceremonies rarely need a dedicated owner inside design.',
     tasks: [
@@ -68,6 +79,7 @@ export const CLUSTERS = [
   {
     id: 'liaison',
     name: 'Cross-functional liaison',
+    category: 'coordination',
     post: 'evolve',
     note: 'Three of eight. The direction of travel matters here. Stop relaying, start translating.',
     tasks: [
@@ -79,6 +91,7 @@ export const CLUSTERS = [
   {
     id: 'status',
     name: 'Reporting and status artifacts',
+    category: 'coordination',
     post: 'retire',
     note: 'Four of eight. The cluster most likely to be producing documents nobody opens.',
     tasks: [
@@ -90,6 +103,7 @@ export const CLUSTERS = [
   {
     id: 'risk',
     name: 'Risk and blocker escalation',
+    category: 'strategy',
     post: 'shift',
     note: 'Three of eight, and every one of them words it as pre-emption rather than reporting.',
     tasks: [
@@ -101,6 +115,7 @@ export const CLUSTERS = [
   {
     id: 'docs',
     name: 'Documentation and source of truth',
+    category: 'tooling',
     post: 'automate',
     note: 'Three of eight. Capture is now cheap. Deciding what is worth capturing is not.',
     tasks: [
@@ -112,6 +127,7 @@ export const CLUSTERS = [
   {
     id: 'tooling',
     name: 'Tooling and file administration',
+    category: 'tooling',
     post: 'automate',
     note: 'Two of eight, and both concentrated at the junior end. Note where this sits in your org.',
     tasks: [
@@ -123,6 +139,7 @@ export const CLUSTERS = [
   {
     id: 'resourcing',
     name: 'Resourcing and allocation',
+    category: 'people',
     post: 'elevate',
     note: 'Two of eight. Tracking capacity is admin. Deciding where capacity goes is not.',
     tasks: [
@@ -133,6 +150,7 @@ export const CLUSTERS = [
   {
     id: 'intake',
     name: 'Intake and governance',
+    category: 'strategy',
     post: 'shift',
     note: 'Two of eight. Upstream of everything else, and the first thing to go unowned.',
     tasks: [
@@ -143,6 +161,7 @@ export const CLUSTERS = [
   {
     id: 'vendor',
     name: 'Vendor, budget and procurement',
+    category: 'strategy',
     post: 'evolve',
     note: 'Three of eight, and almost always missing from how people describe the role from memory.',
     tasks: [
@@ -154,6 +173,7 @@ export const CLUSTERS = [
   {
     id: 'quality',
     name: 'Quality and craft stewardship',
+    category: 'strategy',
     post: 'elevate',
     note: 'The judgment duty. Hardest to move, easiest to leave off the list.',
     tasks: [
@@ -164,6 +184,7 @@ export const CLUSTERS = [
   {
     id: 'workflow',
     name: 'Workflow and process improvement',
+    category: 'people',
     post: 'elevate',
     note: 'Three of eight. Finding the friction and redesigning around it.',
     tasks: [
@@ -175,6 +196,7 @@ export const CLUSTERS = [
   {
     id: 'enablement',
     name: 'Capability building and AI enablement',
+    category: 'tooling',
     post: 'elevate',
     note: 'The new cluster. Four of eight postings are substantially this.',
     tasks: [
