@@ -377,17 +377,17 @@ button { font: inherit; cursor: pointer; }
 }
 .step-ask b { font-family: var(--of-font-mono); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: var(--s1); color: var(--of-fg-subtle); }
 
-.coverage { display: grid; gap: var(--s2); margin: var(--s4) 0 var(--s5); }
+.coverage {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--s2); margin: var(--s4) 0 var(--s5);
+}
 .cov-row {
-  display: grid; grid-template-columns: 1fr auto; gap: var(--s3);
-  align-items: center; padding: var(--s3);
-  border: 1px solid var(--of-border-subtle);
-  border-radius: var(--of-radius-md);
+  display: flex; flex-direction: column; gap: var(--s2);
+  padding: var(--s3);
+  border: 1px solid var(--of-border-line);
+  border-radius: var(--of-radius-lg);
   background: var(--of-bg-elevated);
 }
-.cov-row[data-state="gap"] { border-left: 3px solid var(--call-retire); }
-.cov-row[data-state="partial"] { border-left: 3px solid var(--call-evolve); }
-.cov-row[data-state="covered"] { border-left: 3px solid var(--call-elevate); }
 .cov-label { font-size: 0.875rem; }
 .cov-state {
   font-family: var(--of-font-mono); font-size: 0.6875rem;
