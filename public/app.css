@@ -351,21 +351,20 @@ button { font: inherit; cursor: pointer; }
 .tab:focus-visible { outline: 3px solid var(--of-ring); outline-offset: -3px; }
 
 .step {
-  border-left: 3px solid var(--of-border-line);
-  padding: 0 0 var(--s5) var(--s5);
-  margin-left: var(--s2);
-  position: relative;
+  border: 1px solid var(--of-border-line);
+  border-radius: var(--of-radius-lg);
+  padding: var(--s4);
+  margin-bottom: var(--s3);
 }
-.step[data-key="retire"] { border-left-color: var(--call-retire); }
-.step[data-key="automate"] { border-left-color: var(--call-automate); }
-.step[data-key="shift"] { border-left-color: var(--call-shift); }
-.step[data-key="evolve"] { border-left-color: var(--call-evolve); }
-.step[data-key="elevate"] { border-left-color: var(--call-elevate); }
+.step summary { cursor: pointer; }
+.step summary:focus-visible { outline: 3px solid var(--of-ring); outline-offset: 3px; }
+.step[open] summary { margin-bottom: var(--s3); }
 .step-when {
+  display: block;
   font-family: var(--of-font-mono); font-size: 0.6875rem;
   text-transform: uppercase; letter-spacing: 0.1em; color: var(--of-fg-subtle);
 }
-.step h3 { font-size: 1.125rem; margin: var(--s1) 0 var(--s2); }
+.step-title { display: inline-block; margin-top: var(--s1); font-family: var(--of-font-display); font-size: 1.125rem; font-weight: 600; letter-spacing: -0.01em; }
 .step-why { color: var(--of-fg-muted); font-size: 0.875rem; margin: 0 0 var(--s3); }
 .step ul { margin: 0 0 var(--s3); padding-left: var(--s5); }
 .step li { margin-bottom: var(--s1); font-size: 0.875rem; }
@@ -399,17 +398,20 @@ button { font: inherit; cursor: pointer; }
   border: 1px solid var(--of-border-line);
   border-radius: var(--of-radius-lg);
   background: var(--of-bg-elevated);
-  padding: var(--s5);
-  margin: var(--s5) 0;
+  padding: var(--s4);
+  margin-bottom: var(--s3);
 }
-.ai-block h3 { font-size: 1.0625rem; margin-bottom: var(--s3); }
+.ai-block summary { cursor: pointer; }
+.ai-block summary:focus-visible { outline: 3px solid var(--of-ring); outline-offset: 3px; }
+.ai-block[open] summary { margin-bottom: var(--s3); }
 .ai-block p { margin: 0 0 var(--s3); }
 .ai-block p:last-child { margin-bottom: 0; }
 .ai-tag {
   font-family: var(--of-font-mono); font-size: 0.625rem;
   text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--of-fg-subtle); display: block; margin-bottom: var(--s2);
+  color: var(--of-fg-subtle); display: block; margin-bottom: var(--s1);
 }
+.ai-block-title { display: inline-block; font-family: var(--of-font-display); font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.01em; }
 
 .spinner {
   display: inline-block; width: 13px; height: 13px;

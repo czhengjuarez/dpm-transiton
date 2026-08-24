@@ -314,9 +314,11 @@ function renderResult() {
 }
 
 function aiBlock(tag, title, text) {
-  const b = el('div', 'ai-block');
-  b.append(el('span', 'ai-tag', tag));
-  b.append(el('h3', null, title));
+  const b = el('details', 'ai-block');
+  const summary = el('summary');
+  summary.append(el('span', 'ai-tag', tag));
+  summary.append(el('span', 'ai-block-title', title));
+  b.append(summary);
   for (const para of String(text).split(/\n{2,}|\n/).map((s) => s.trim()).filter(Boolean)) {
     b.append(el('p', null, para));
   }
@@ -335,10 +337,11 @@ function renderRolePanel(a, ai) {
   p.append(intro);
 
   for (const s of a.sequence) {
-    const step = el('div', 'step');
-    step.dataset.key = s.key;
-    step.append(el('div', 'step-when', s.when));
-    step.append(el('h3', null, `${s.title} · ${s.items.length}`));
+    const step = el('details', 'step');
+    const summary = el('summary');
+    summary.append(el('span', 'step-when', s.when));
+    summary.append(el('span', 'step-title', `${s.title} · ${s.items.length}`));
+    step.append(summary);
     step.append(el('p', 'step-why', s.why));
     const ul = el('ul');
     for (const it of s.items) {
@@ -427,10 +430,11 @@ function renderPersonPanel(a, ai) {
     ['Days 61 to 90', 'Take on the work the role is actually for, in the space the first sixty days made.', [...bucket('evolve'), ...bucket('elevate')]],
   ];
   for (const [when, why, items] of windows) {
-    const step = el('div', 'step');
-    step.dataset.key = when.includes('1 to 30') ? 'retire' : when.includes('31') ? 'shift' : 'elevate';
-    step.append(el('div', 'step-when', when));
-    step.append(el('h3', null, `${items.length} ${items.length === 1 ? 'item' : 'items'}`));
+    const step = el('details', 'step');
+    const summary = el('summary');
+    summary.append(el('span', 'step-when', when));
+    summary.append(el('span', 'step-title', `${items.length} ${items.length === 1 ? 'item' : 'items'}`));
+    step.append(summary);
     step.append(el('p', 'step-why', why));
     if (items.length) {
       const ul = el('ul');
