@@ -2,7 +2,7 @@
 
 Companion tool for **Design roles are shifting. So should the DPM role.** (Ops Forward).
 
-A reader sorts 38 tasks, drawn from eight real Design Program Manager job postings, into five calls. They get back the role rewritten and sequenced, plus a transition plan for the person holding it.
+A reader sorts 39 tasks, drawn from nine real Design Program Manager and adjacent job postings, into five calls. They get back the role rewritten and sequenced, plus a transition plan for the person holding it.
 
 ## What changed from the first version
 
@@ -63,7 +63,7 @@ D1 runs locally by default (a SQLite file under `.wrangler/state`), no `--remote
 
 ```
 src/index.js     Worker. Routes /api/*, hands everything else to the assets binding.
-src/tasks.js     Task inventory. 38 tasks, 13 clusters, 8 sources. Single source of truth.
+src/tasks.js     Task inventory. 39 tasks, 13 clusters, 9 sources. Single source of truth.
 src/advice.js    Rules engine + prompt construction. No I/O.
 src/tally.js     D1-backed crowd average: seed, record, read. The only I/O outside advice.js.
 migrations/      D1 schema for the tally table.
@@ -133,9 +133,9 @@ Appending a task also means it starts with zero rows in the tally table. `ensure
 
 ## Verification status of the sources
 
-See `SOURCES.md`. Short version: eight postings, read 22 to 23 August 2026, two open at the time of reading. Task text is **paraphrased** from posting bullets, not quoted, so it is ours to edit. The three verbatim quotes that appear in the post itself are checked separately there.
+See `SOURCES.md`. Short version: eight postings, read 22 to 23 August 2026, two open at the time of reading, plus one added 24 August 2026 after a reader coverage check. Task text is **paraphrased** from posting bullets, not quoted, so it is ours to edit. The three verbatim quotes that appear in the post itself are checked separately there.
 
 ## Open items
 
-- The post's companion teaser still says "Thirty two tasks ... and four calls to make on each one." It is now **38 tasks and five calls.** That line needs updating before publication.
+- The post's companion teaser still says "Thirty two tasks ... and four calls to make on each one." It is now **39 tasks and five calls.** That line needs updating before publication.
 - The Indeed exact-phrase counts in the post need re-running on a single day.

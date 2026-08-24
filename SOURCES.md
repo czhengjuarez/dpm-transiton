@@ -1,6 +1,6 @@
 # Sources
 
-Eight Design Program Manager postings, read 22 to 23 August 2026. Two were open at the time of reading.
+Eight Design Program Manager postings, read 22 to 23 August 2026, plus one later addition. Two of the original eight were open at the time of reading.
 
 Task text in `src/tasks.js` is **paraphrased** from posting bullets, not quoted. Verbatim quotes appear only in the post, where they are checked individually.
 
@@ -14,6 +14,7 @@ Task text in `src/tasks.js` is **paraphrased** from posting bullets, not quoted.
 | Nothing | Design Program Manager | Closed 23 Jan 2026 | none posted | https://builtin.com/job/design-program-manager/7784286 |
 | Figma | Design Program Manager, Platform | Closed 4 Dec 2025 | $164,000 to $294,000 | https://builtin.com/job/design-program-manager-platform/7100484 |
 | WorkOS | Design Program Manager | Closed 9 Oct 2025 | none posted | https://builtin.com/job/design-program-manager/6985230 |
+| Google | UX Program Manager, Search AI | **Open** | $132,000 to $189,000 | https://www.google.com/about/careers/applications/jobs/results/104939995780784838-ux-program-manager-search-ai |
 
 ## Notes on individual sources
 
@@ -25,6 +26,8 @@ Task text in `src/tasks.js` is **paraphrased** from posting bullets, not quoted.
 
 **Dropped.** An earlier draft of the worksheet carried a task attributed to "Uber, via published interview." The source could not be re-located on 23 August 2026, so it was removed rather than kept with a soft citation.
 
+**Google, added 24 August 2026.** Not part of the original eight. Added after a reader asked whether five real postings for adjacent titles (UX Program Manager, UX Research Operations Program Manager, and others) surfaced anything the worksheet was missing. They did: design system stewardship, named explicitly as its own responsibility in this posting and in a closely matching one at Yahoo, was not represented anywhere in the inventory. This posting's title is "UX Program Manager," not "Design Program Manager," which is a real scope question worth flagging rather than quietly absorbing. A second finding from that same check, research operations work (participant recruitment, research data compliance, found in a Zoox posting), was deliberately left out as out of scope for a design-titled role.
+
 ## Cluster frequency claims
 
-The "N of eight" note on each cluster is the number of the eight postings that contributed a task to that cluster. It is not a claim about how often the duty appears across the whole field, which is not something eight postings can support.
+The "N of eight" note on each cluster is the number of the *original* eight postings that contributed a task to that cluster. It does not count the Google addition, and it is not a claim about how often the duty appears across the whole field, which is not something eight postings can support.

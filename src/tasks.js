@@ -1,7 +1,7 @@
 // Task inventory for the DPM transition worksheet.
 //
-// Every task is a paraphrase of a real bullet from one of eight Design Program
-// Manager job postings read 22 to 23 August 2026. Sources and verification
+// Every task is a paraphrase of a real bullet from one of nine Design Program
+// Manager job postings read 22 to 24 August 2026. Sources and verification
 // status are in SOURCES.md. Paraphrased, not quoted, so wording is ours.
 //
 // `post` is the position taken in "Design roles are shifting. So should the DPM
@@ -179,6 +179,7 @@ export const CLUSTERS = [
     tasks: [
       ['Protect quality by tracking design decisions against technical feasibility and scope', 'Nothing'],
       ['Establish quality standards for self-service work to ensure consistency', 'Discord'],
+      ['Audit the design system and codify patterns so they stay consistent across teams', 'Google'],
     ],
   },
   {
@@ -243,4 +244,5 @@ export const SOURCES = [
   { company: 'Nothing', role: 'Design Program Manager', status: 'Closed 23 Jan 2026', accessed: '2026-08-23' },
   { company: 'Figma', role: 'Design Program Manager, Platform', status: 'Closed 4 Dec 2025', accessed: '2026-08-23' },
   { company: 'WorkOS', role: 'Design Program Manager', status: 'Closed 9 Oct 2025', accessed: '2026-08-23' },
+  { company: 'Google', role: 'UX Program Manager, Search AI', status: 'Open', accessed: '2026-08-24' },
 ];

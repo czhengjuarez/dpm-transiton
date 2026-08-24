@@ -18,7 +18,7 @@ Workers AI (`env.AI`) does not run in local `wrangler dev` by default; requests 
 
 ## Architecture
 
-**Request flow:** `src/index.js` is the only Worker entry point. It routes `/api/tasks` and `/api/advise`, and hands everything else to the static assets binding (`public/`). `src/tasks.js` is the single source of truth for content (38 tasks, 13 clusters, 4 categories); `src/advice.js` is a pure rules engine (no I/O) that turns a reader's marks into a verdict, sequence, coverage, and divergence; `src/tally.js` is the only other I/O module, wrapping the D1-backed crowd tally.
+**Request flow:** `src/index.js` is the only Worker entry point. It routes `/api/tasks` and `/api/advise`, and hands everything else to the static assets binding (`public/`). `src/tasks.js` is the single source of truth for content (39 tasks, 13 clusters, 4 categories); `src/advice.js` is a pure rules engine (no I/O) that turns a reader's marks into a verdict, sequence, coverage, and divergence; `src/tally.js` is the only other I/O module, wrapping the D1-backed crowd tally.
 
 **The rules engine is the product, the model is a bonus.** `analyse()` in `advice.js` computes a complete, correct result with no network call. `/api/advise` calls Workers AI on top of that to generate four paragraphs of prose, but if the AI binding is missing, times out, or returns something unparseable, the JSON rules-engine result is still returned and the front end renders it with an "unavailable" note instead of breaking. Preserve this fallback chain when touching either file — nothing should ever hard-depend on `env.AI`.
 

@@ -237,7 +237,7 @@ export function buildPrompt(a) {
 
   const user = `${audience}
 
-They sorted ${a.marked} of ${a.total} tasks drawn from eight real Design Program Manager job postings.
+They sorted ${a.marked} of ${a.total} tasks drawn from nine real Design Program Manager and adjacent job postings.
 
 Their calls: shift to a TPM or other function ${a.counts.shift}, automate ${a.counts.automate}, retire ${a.counts.retire}, evolve ${a.counts.evolve}, elevate ${a.counts.elevate}. That is ${a.pctLeaving}% leaving the role and ${a.pctStaying}% staying or growing.
 
