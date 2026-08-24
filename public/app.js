@@ -7,7 +7,6 @@ const CONTRIBUTED_KEY = 'ofw.dpm-transition.contributed';
 const THEME_KEY = 'ofw.dpm-transition.theme';
 
 const state = {
-  mode: null,
   marks: {},
   data: null,
   result: null,
@@ -26,7 +25,7 @@ const el = (tag, cls, text) => {
 
 function save() {
   try {
-    localStorage.setItem(STORE, JSON.stringify({ mode: state.mode, marks: state.marks }));
+    localStorage.setItem(STORE, JSON.stringify({ marks: state.marks }));
   } catch { /* private mode, ignore */ }
 }
 function restore() {
@@ -71,9 +70,7 @@ async function boot() {
   renderLegend($('#legend2'));
   renderSources();
 
-  document.querySelectorAll('.mode-card').forEach((b) => {
-    b.addEventListener('click', () => start(b.dataset.mode));
-  });
+  $('#btn-start').addEventListener('click', () => start());
 
   $('#btn-home').addEventListener('click', () => show('mode'));
   $('#btn-back').addEventListener('click', () => show('mode'));
@@ -87,10 +84,9 @@ async function boot() {
   $('#tab-person').addEventListener('click', () => setTab('person'));
 
   const prev = restore();
-  if (prev && prev.mode && prev.marks && Object.keys(prev.marks).length) {
-    state.mode = prev.mode;
+  if (prev && prev.marks && Object.keys(prev.marks).length) {
     state.marks = prev.marks;
-    start(prev.mode, true);
+    start(true);
   }
 }
 
@@ -127,19 +123,8 @@ function show(which) {
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-const LEDE = {
-  leader:
-    'Mark each task the way it actually is in your org today, not the way the job description says. You are the one who can move any of it, so the honest answer is the useful one.',
-  dpm:
-    'Mark each task the way you actually spend the week, not the way your job description reads. The result is only as good as your willingness to mark something you do as retire.',
-};
-
-function start(mode, silent) {
-  state.mode = mode;
+function start(silent) {
   if (!silent) save();
-  $('#sort-mode-label').textContent = mode === 'dpm' ? 'DPM mode' : 'Leader mode';
-  $('#sort-title').textContent = mode === 'dpm' ? 'Sort your own work' : 'Sort the work';
-  $('#sort-lede').textContent = LEDE[mode];
   renderClusters();
   updateProgress();
   show('sort');
@@ -274,7 +259,7 @@ async function analyse() {
     const res = await fetch('/api/advise', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ mode: state.mode, marks: state.marks, contribute: !contributed }),
+      body: JSON.stringify({ marks: state.marks, contribute: !contributed }),
     });
     payload = await res.json();
     if (!contributed && payload.analysis && payload.analysis.marked >= 8) {
@@ -301,8 +286,6 @@ function renderResult() {
   const a = state.result.analysis;
   const ai = state.result.ai;
 
-  $('#result-mode-label').textContent = a.mode === 'dpm' ? 'DPM mode' : 'Leader mode';
-
   // stats
   const stats = $('#stats');
   stats.innerHTML = '';
@@ -327,7 +310,7 @@ function renderResult() {
 
   renderRolePanel(a, ai);
   renderPersonPanel(a, ai);
-  setTab(a.mode === 'dpm' ? 'person' : 'role');
+  setTab('role');
 }
 
 function aiBlock(tag, title, text) {
@@ -377,8 +360,9 @@ function renderRolePanel(a, ai) {
   if (!ai) p.append(unavailable(state.result.aiError));
 
   if (a.divergence.length) {
-    const d = el('div', 'diverge');
-    d.append(el('h3', null, `You disagreed with the average on ${a.divergence.length} ${a.divergence.length === 1 ? 'task' : 'tasks'}`));
+    const d = el('details', 'diverge');
+    const n = a.divergence.length;
+    d.append(el('summary', null, `${n} ${n === 1 ? 'task' : 'tasks'} where you split from the average`));
     const note = el('p');
     note.style.cssText = 'color:var(--of-fg-muted);font-size:.875rem;margin:0 0 12px';
     note.textContent = 'This is the useful part. The average is everyone who has run this worksheet so far, starting from a single seed opinion. You have a specific org in front of you.';
@@ -412,9 +396,7 @@ function renderPersonPanel(a, ai) {
   intro.style.color = 'var(--of-fg-muted)';
   intro.style.maxWidth = '62ch';
   intro.textContent =
-    a.mode === 'dpm'
-      ? 'Measured against the eight capabilities the post argues the role becomes. A gap is not a verdict, it is a list of what to go learn while you still have the runway to learn it.'
-      : 'Measured against the eight capabilities the post argues the role becomes. Where you invested nothing, you are asking the person to grow into something the job is not currently letting them practise.';
+    'Measured against the eight capabilities the post argues the role becomes. A gap is not a verdict, it is a list of what to go learn, or what to help someone else grow into, while there is still runway for it.';
   p.append(intro);
 
   const h = el('h3'); h.style.cssText = 'font-size:1.0625rem;margin:24px 0 8px';
@@ -435,15 +417,14 @@ function renderPersonPanel(a, ai) {
   // 30/60/90 built from the sequence
   const plan = el('div');
   const ph = el('h3'); ph.style.cssText = 'font-size:1.0625rem;margin:32px 0 8px';
-  ph.textContent = a.mode === 'dpm' ? 'Your next ninety days' : 'Their next ninety days';
+  ph.textContent = 'The next ninety days';
   plan.append(ph);
 
-  const who = a.mode === 'dpm' ? 'You' : 'They';
   const bucket = (k) => a.buckets[k] || [];
   const windows = [
-    ['Days 1 to 30', `${who} stop producing what nobody reads and hand off what a tool does.`, [...bucket('retire'), ...bucket('automate')]],
-    ['Days 31 to 60', `${who} start the handover conversations. One named counterpart per item, in writing.`, bucket('shift')],
-    ['Days 61 to 90', `${who} take on the work the role is actually for, in the space the first sixty days made.`, [...bucket('evolve'), ...bucket('elevate')]],
+    ['Days 1 to 30', 'Stop producing what nobody reads and hand off what a tool does.', [...bucket('retire'), ...bucket('automate')]],
+    ['Days 31 to 60', 'Start the handover conversations. One named counterpart per item, in writing.', bucket('shift')],
+    ['Days 61 to 90', 'Take on the work the role is actually for, in the space the first sixty days made.', [...bucket('evolve'), ...bucket('elevate')]],
   ];
   for (const [when, why, items] of windows) {
     const step = el('div', 'step');
@@ -464,20 +445,18 @@ function renderPersonPanel(a, ai) {
   p.append(plan);
 
   if (ai && ai.conversation) {
-    p.append(aiBlock('Written for your result', a.mode === 'dpm' ? 'Opening it with your manager' : 'Opening it with them', ai.conversation));
+    p.append(aiBlock('Written for your result', 'Opening the conversation', ai.conversation));
   }
   if (ai && ai.blindspot) p.append(aiBlock('Written for your result', 'Go find this out', ai.blindspot));
   if (!ai) p.append(unavailable(state.result.aiError));
 
-  if (a.mode === 'leader') {
-    const warn = el('div', 'step-ask');
-    warn.style.marginTop = '24px';
-    warn.append(el('b', null, 'Before you run this with them'));
-    warn.append(document.createTextNode(
-      'Somebody asked to help sort their own responsibilities into automate and retire will work out what the exercise is. If a decision has already been made, say so before you start. If one has not, say that too, and mean it.'
-    ));
-    p.append(warn);
-  }
+  const warn = el('div', 'step-ask');
+  warn.style.marginTop = '24px';
+  warn.append(el('b', null, 'Before this leaves your hands'));
+  warn.append(document.createTextNode(
+    'If you are handing these calls to someone else, they will work out what the exercise is. Say upfront whether a decision has already been made. If one has not, say that too, and mean it.'
+  ));
+  p.append(warn);
 }
 
 function unavailable(reason) {
@@ -507,7 +486,6 @@ function exportMd() {
 
   L.push('# DPM Transition Worksheet');
   L.push('');
-  L.push(`Mode: ${a.mode === 'dpm' ? 'DPM, run on own role' : 'Leader, run on a role they own'}`);
   L.push(`Marked: ${a.marked} of ${a.total} tasks`);
   L.push('');
   L.push(`Leaving the role: ${a.pctLeaving}%. Staying or growing: ${a.pctStaying}%.`);

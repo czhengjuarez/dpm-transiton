@@ -40,17 +40,8 @@
     <p class="lede">Design program management is a bundle of work that used to travel together. The bundle came apart. Some of it moves to a TPM, some of it a tool now does, some of it should stop being produced, and some of it becomes the most valuable thing the role does.</p>
     <p class="lede">Below are 38 tasks, taken from eight real Design Program Manager job postings. Make five kinds of call on each one. At the end you get the role rewritten, and a plan for the person holding it.</p>
 
-    <div class="modes">
-      <button class="mode-card" data-mode="leader">
-        <span class="mc-role">Mode one</span>
-        <span class="mc-title">I lead the team</span>
-        <span class="mc-body">You own this role, and probably the person in it. You get the role redesigned, sequenced by what you can act on without asking anyone, and a plan for the conversation you owe them.</span>
-      </button>
-      <button class="mode-card" data-mode="dpm">
-        <span class="mc-role">Mode two</span>
-        <span class="mc-title">I am the DPM</span>
-        <span class="mc-body">You are running this on your own job. You get an argument you can take to your manager about what to stop doing, and an honest read on where your capability gaps are.</span>
-      </button>
+    <div style="margin:var(--s6) 0 var(--s5)">
+      <button class="btn btn-primary btn-lg" id="btn-start" type="button">Start sorting</button>
     </div>
 
     <div class="narrow">
@@ -73,9 +64,8 @@
 
   <div class="wrap">
     <div style="padding:32px 0 8px">
-      <div class="eyebrow" id="sort-mode-label">Leader mode</div>
-      <h2 style="font-size:1.5rem;margin-bottom:8px" id="sort-title">Sort the work</h2>
-      <p style="color:var(--of-fg-muted);max-width:62ch;margin:0" id="sort-lede"></p>
+      <h2 style="font-size:1.5rem;margin-bottom:8px">Sort the work</h2>
+      <p style="color:var(--of-fg-muted);max-width:62ch;margin:0" id="sort-lede">Mark each task the way it actually is today, not the way the job description reads. The honest answer is the only useful one, especially when it means marking something as retire.</p>
     </div>
 
     <details style="margin:16px 0;color:var(--of-fg-muted);font-size:.875rem">
@@ -101,7 +91,6 @@
 <main id="screen-result" class="hidden">
   <div class="wrap">
     <div style="padding:32px 0 0">
-      <div class="eyebrow" id="result-mode-label"></div>
       <h1 style="font-size:clamp(1.6rem,4vw,2.25rem)">Your result</h1>
     </div>
 

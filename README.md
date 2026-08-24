@@ -22,6 +22,8 @@ Every task carries a position, revealed **after** the reader makes their own cal
 
 That position used to be fixed: the essay author's call, baked into the data. It is now a **crowd average**, tallied in D1 across everyone who has run the worksheet. It still starts from the author's original call, seeded with a small weight so a task with zero real answers has an opinion, but real answers dilute and eventually outweigh that seed. See `src/tally.js`.
 
+There also used to be a "Leader mode" and "DPM mode" chosen up front. They looked different but computed the same result: the rules engine never branched on mode, only the pronouns, the AI prompt's audience framing, and which result tab opened first did. That was too thin a difference to justify a choice screen, so there is now one flow. The copy is written to work either way, whether the reader is sorting their own job or one they lead, rather than assuming one and bolting the other on.
+
 ## Deploy
 
 ```bash
@@ -78,7 +80,6 @@ Request:
 
 ```json
 {
-  "mode": "leader" | "dpm",
   "marks": { "<taskId>": "shift|automate|retire|evolve|elevate" },
   "contribute": true
 }
@@ -138,4 +139,3 @@ See `SOURCES.md`. Short version: eight postings, read 22 to 23 August 2026, two 
 
 - The post's companion teaser still says "Thirty two tasks ... and four calls to make on each one." It is now **38 tasks and five calls.** That line needs updating before publication.
 - The Indeed exact-phrase counts in the post need re-running on a single day.
-- Consider a `?mode=dpm` deep link so the post can send paid subscribers straight into the right mode.

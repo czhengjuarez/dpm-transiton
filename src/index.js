@@ -52,7 +52,7 @@ async function handleAdvise(request, env, ctx) {
   if (Object.keys(marks).length > 200) return json({ error: 'too many marks' }, 400);
 
   const averages = await getAverages(env, Object.keys(marks));
-  const analysis = analyse({ mode: body.mode, marks, averages });
+  const analysis = analyse({ marks, averages });
 
   if (analysis.marked < 8) {
     return json({ analysis, ai: null, aiError: 'too-few-marks' });
@@ -92,8 +92,19 @@ async function handleAdvise(request, env, ctx) {
 
     clearTimeout(timer);
 
-    const raw = typeof result === 'string' ? result : result?.response ?? '';
-    const parsed = extractJson(raw);
+    // Workers AI's response shape for this model varies: sometimes `response`
+    // is the raw string the prompt asked for, sometimes the runtime has
+    // already parsed it into an object. Handle both rather than assuming one.
+    let parsed;
+    if (typeof result === 'string') {
+      parsed = extractJson(result);
+    } else if (typeof result?.response === 'string') {
+      parsed = extractJson(result.response);
+    } else if (result?.response && typeof result.response === 'object') {
+      parsed = result.response;
+    } else {
+      parsed = null;
+    }
 
     if (!parsed) return json({ analysis, ai: null, aiError: 'unparseable' });
 

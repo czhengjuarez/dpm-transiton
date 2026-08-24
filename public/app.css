@@ -181,7 +181,7 @@ button { font: inherit; cursor: pointer; }
 
 .btn-lg { padding: 11px 22px; font-size: 0.9375rem; }
 
-/* ---------- mode picker ---------- */
+/* ---------- hero ---------- */
 
 .hero { padding: var(--s8) 0 var(--s6); }
 .eyebrow {
@@ -192,31 +192,6 @@ button { font: inherit; cursor: pointer; }
 .hero h1 { font-size: clamp(1.9rem, 5vw, 3rem); margin-bottom: var(--s4); }
 .lede { font-size: 1.0625rem; color: var(--of-fg-muted); max-width: 62ch; }
 .lede + .lede { margin-top: var(--s3); }
-
-.modes { display: grid; gap: var(--s4); grid-template-columns: 1fr 1fr; margin: var(--s6) 0 var(--s5); }
-@media (max-width: 700px) { .modes { grid-template-columns: 1fr; } }
-
-.mode-card {
-  text-align: left;
-  border: 1px solid var(--of-border-line);
-  background: var(--of-bg-elevated);
-  border-radius: var(--of-radius-lg);
-  padding: var(--s5);
-  display: flex; flex-direction: column; gap: var(--s2);
-  transition: border-color .12s, transform .12s, box-shadow .12s;
-}
-.mode-card:hover {
-  border-color: var(--of-magenta-400);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(128, 7, 77, .1);
-}
-.mode-card:focus-visible { outline: 3px solid var(--of-ring); outline-offset: 2px; }
-.mode-card .mc-role {
-  font-family: var(--of-font-mono); font-size: 0.6875rem;
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--of-fg-brand);
-}
-.mode-card .mc-title { font-family: var(--of-font-display); font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
-.mode-card .mc-body { color: var(--of-fg-muted); font-size: 0.875rem; }
 
 /* ---------- calls legend ---------- */
 
@@ -448,7 +423,10 @@ button { font: inherit; cursor: pointer; }
   border-radius: var(--of-radius-lg);
   padding: var(--s4); margin: var(--s5) 0;
 }
-.diverge h3 { font-size: 1rem; margin-bottom: var(--s2); }
+.diverge summary { font-size: 1rem; font-weight: 500; cursor: pointer; color: var(--of-fg-default); }
+.diverge summary:focus-visible { outline: 3px solid var(--of-ring); outline-offset: 3px; }
+.diverge[open] summary { margin-bottom: var(--s2); }
+.diverge p { margin-top: var(--s3); }
 .diverge table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
 .diverge th, .diverge td { text-align: left; padding: var(--s2) var(--s3) var(--s2) 0; border-bottom: 1px solid var(--of-border-subtle); vertical-align: top; }
 .diverge th { font-family: var(--of-font-mono); font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--of-fg-subtle); font-weight: 600; }

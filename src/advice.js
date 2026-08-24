@@ -13,7 +13,7 @@ const STAYING = new Set(['evolve', 'elevate']);
 const byId = new Map(TASKS.map((t) => [t.id, t]));
 
 /**
- * @param {{mode:'leader'|'dpm', marks:Record<string,string>, averages?:Record<string,{call:string,n:number}>}} input
+ * @param {{marks:Record<string,string>, averages?:Record<string,{call:string,n:number}>}} input
  */
 export function analyse(input) {
   const marks = input.marks || {};
@@ -87,7 +87,6 @@ export function analyse(input) {
   const partial = coverage.filter((c) => c.state === 'partial');
 
   return {
-    mode: input.mode === 'dpm' ? 'dpm' : 'leader',
     marked,
     total: TASKS.length,
     counts,
@@ -234,9 +233,7 @@ export function buildPrompt(a) {
   const partialList = a.partial.length ? a.partial.map((g) => g.label).join('; ') : 'none';
 
   const audience =
-    a.mode === 'dpm'
-      ? 'The reader IS the design program manager, running this on their own role. Write to them directly as "you". They are deciding what to stop doing and what to argue for. Be useful to someone whose job security is genuinely in question, without either reassuring them falsely or catastrophising.'
-      : 'The reader is a design leader who owns this role and may own the person in it. Write to them as "you". They are deciding how to redesign the role, and separately how to help a real person through the change. Never let them treat the second part as an afterthought.';
+    'The reader is sorting a design program manager role, which may be their own job or one they lead. Write to them directly as "you" without assuming which. They are deciding what to stop doing and what to argue for, and separately, if this is not their own role, how to help a real person through the change. Be useful to someone whose job security may genuinely be in question, without either reassuring them falsely or catastrophising, and never let a leader treat the human side as an afterthought.';
 
   const user = `${audience}
 
@@ -258,7 +255,7 @@ Return JSON with exactly these keys:
 {
   "read": "Two or three paragraphs. What their pattern of answers actually says about this org and this role. Name specific clusters. If their answers are internally inconsistent, say so.",
   "hardest": "One paragraph. The single hardest move on their list and why it will stall. Be specific about who will resist and what they will say.",
-  "conversation": "Two paragraphs. ${a.mode === 'dpm' ? 'How to open the conversation with their manager about changing the shape of their job, including one sentence they could actually say out loud.' : 'How to open the conversation with the person in this role. Include one sentence they could actually say out loud. Assume the person has worked out what the exercise is.'}",
+  "conversation": "Two paragraphs. How to open the conversation about changing the shape of this role, with a manager if this is the reader's own job, or with the person in the seat if it is not. Include one sentence they could actually say out loud. If it is not their own role, assume the person has worked out what the exercise is.",
   "blindspot": "One paragraph. What this worksheet did not ask that they should go find out. It counts tasks, not hours, and that is a real limitation."
 }`;
 
