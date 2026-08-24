@@ -152,8 +152,9 @@ function renderClusters() {
     const clusters = byCategory.get(cat.id);
     if (!clusters || !clusters.length) continue;
 
-    const catSec = el('section', 'category');
-    if (cat.name) catSec.append(el('h2', 'category-head', cat.name));
+    const catSec = el('details', 'category');
+    catSec.open = true;
+    if (cat.name) catSec.append(el('summary', 'category-head', cat.name));
     host.append(catSec);
 
     for (const c of clusters) {

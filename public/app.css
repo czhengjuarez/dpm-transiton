@@ -250,15 +250,17 @@ button { font: inherit; cursor: pointer; }
 .category { margin: var(--s8) 0 0; }
 .category:first-child { margin-top: var(--s5); }
 .category-head {
+  cursor: pointer;
   font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--of-fg-brand);
-  margin-bottom: var(--s3);
   padding-bottom: var(--s2);
   border-bottom: 2px solid var(--of-fg-brand);
 }
+.category-head:focus-visible { outline: 3px solid var(--of-ring); outline-offset: 3px; }
+.category[open] > .category-head { margin-bottom: var(--s3); }
 
 /* ---------- clusters ---------- */
 
